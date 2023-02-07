@@ -1,0 +1,10 @@
+rootPath=/media/bzdeco/WD_LINE/OCT/
+dataPath=/media/bzdeco/WD_LINE/OCT/raw_dataset
+amd=caj,gaj,imc,mag,mem,vab,wim
+control=bas,boc,brd,cap,gec,lue,moe,pem,rod,scm,sif,vec,wia
+amdExclude=
+controlExclude=bas_right_down,gec_right_full,moe_left_up
+amdTrain=caj,gaj,mag,vab,wim
+amdTest=imc,mem
+controlTrain=bas,boc,cap,gec,lue,moe,scm,sif,vec,wia
+controlTest=brd,pem,rod
