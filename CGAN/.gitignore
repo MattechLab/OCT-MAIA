@@ -1,0 +1,5 @@
+generated_patches/
+extra_data/
+__pycache__/
+err/
+out/
