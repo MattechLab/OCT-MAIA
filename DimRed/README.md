@@ -1,4 +1,4 @@
-# OCT_thickness
+# Dimensionality Reduction
 The folder is structured as follows:
 
 - `helpers.py`: python file containing all the helper functions. 
