@@ -16,7 +16,7 @@ from sklearn.decomposition import PCA, KernelPCA, NMF
 
 def getStackedXYData(paths, normmode = 'Z-score', normmode_thick = 'EQ-hist'):
     """ 
-    returns OCT and thickness in X, and corresponding labels in y. 
+    returns OCT and thickness in X, and corresponding labels in y, for given paths.
     """
     def normalize(img,normmode = 'Z-score'):
         if normmode == 'Z-score':
@@ -71,6 +71,9 @@ def getStackedXYData(paths, normmode = 'Z-score', normmode_thick = 'EQ-hist'):
     return X,y
 
 def getBalancedStackedXYData(normmode = 'EQ-hist', normmode_thick='EQ-hist'):
+    """ 
+    returns balanced OCT and thickness in X, and corresponding labels in y.
+    """
     rootpath = r'C:\Users\line\Desktop\Mauro\3_DataSet\OCT_balanced'
     paths = glob.glob(os.path.join(rootpath,'controlP' + '\*.pickle'))
     paths2 = glob.glob(os.path.join(rootpath,'amdP' + '\*.pickle'))
@@ -82,6 +85,11 @@ def NormalizeThickness(X, normmode=None, std_train=None, mean_train=None):
     """
     Normalize the vector of the thickness X with norm mode normmode. 
     if std_train is given, the normalisation will use that std. Same for mean_train. 
+    INPUT: 
+    - X: data to normalise
+    - normmode: str, indicates which normalisation to use. 
+    - std_train: if given, use the standard deviation that is given instead of the standard deviation of X (for normalisation that requires it)
+    - mean_train: same as std_train, except for the mean.
     """
     # if the arguments mean or std are given:
     if mean_train:
@@ -144,6 +152,10 @@ def getLabelledMatrices(X, y, normmode=None, std_train=None, mean_train=None):
     return M0, M1
 
 def train_dim_red(X_train, y_train, normmode, dimred_model, params=None, plot=True, alpha=0.1, savefile=None):
+    """
+    For supervised dimensionality reduction models, train the model 'dimred_model', with parameters 'params', on data 'X_train' with corresponding labels 'y_train'.
+    If 'plot'==True, the projections of the M_0 (resp. M_1) are plotted, where M_0 is the vectors associated to label 0, resp. 1. 
+    """
     if savefile:
         print("START TRAINING:", savefile)
     print("training set:", X_train.shape[0])
@@ -241,6 +253,11 @@ def train_dim_red(X_train, y_train, normmode, dimred_model, params=None, plot=Tr
     return dimred_model0, dimred_model1
 
 def plot_validation(X_valid, y_valid, normmode, dimred_model0, dimred_model1, std_train, mean_train, savefile=None,):
+    """
+    From validation data 'X_valid' with corresponding label 'y_valid', plots the projections of M_0 (resp. M_1) using the already trained models 'dimred_model0' and 'dimred_model1'. 
+    The arguments 'normmode', 'std_train' and 'mean_train' are used for the normalisation of the data. 
+    The values 'std_train', resp. 'mean_train', should contain the standard deviation, resp. the mean, of the training data.
+    """
     M0_valid, M1_valid = getLabelledMatrices(X_valid, y_valid, normmode=normmode, std_train=std_train, mean_train=mean_train)
 
     M0_valid_t0 = dimred_model0.transform(M0_valid)
@@ -275,7 +292,10 @@ def plot_validation(X_valid, y_valid, normmode, dimred_model0, dimred_model1, st
 
 
 def plot_3D(X_valid, y_valid, normmode, dimred_model0, dimred_model1, std_train, mean_train, savefile=None, alpha=0.1,):
-    
+    """
+    Same as plot_validation(), except in 3D.
+    Only works for dim. red. models that projects in a space with dimension bigger or equal to 3
+    """
     M0_valid, M1_valid = getLabelledMatrices(X_valid, y_valid, normmode, std_train=std_train, mean_train=mean_train)
 
     M0_valid_t0 = dimred_model0.transform(M0_valid)
@@ -306,6 +326,15 @@ def plot_3D(X_valid, y_valid, normmode, dimred_model0, dimred_model1, std_train,
 def plot_cv(dimred_model, X, y, dimred_params=None, dimred_normmode=None, cv=None, savefile=None, plot3D=False):
     """
     plot train and validation projections for the model dimred_model, data X and label y. 
+    INPUT: 
+    - dimred_model: supervised dimensionality reduction model (like PCA, KPCA, or NMF)
+    - X: the whole data
+    - y: the corresponding labels
+    - dimred_params: parameters of the dim. red. model
+    - dimred_normmode: normalisation mode to be applied on the data
+    - cv: cross validation (kfold)
+    - savefile: path where to save the plots
+    - plot3D: if true, plots the 3D projections (only works for dim. red. models that projects in a space with dimension bigger or equal to 3)
     """
     
     for fold, (train_fold_index, val_fold_index) in enumerate(cv.split(X, y)):
@@ -328,7 +357,7 @@ def plot_cv(dimred_model, X, y, dimred_params=None, dimred_normmode=None, cv=Non
 def score_dimred_model_PR(model, dimred_model, X, y, params=None, dimred_params=None, dimred_normmode=None, cv=None, plotMatrix = None, plotROC = None, setThreshold = None,
                            ax2 = None, modelname = '', label = None, savefile=None):
     """
-    TO COMPLETE LATER   
+    !!! This function is not complete. I did not manage to have meaningful projections !!! 
     Creates folds manually, and upsamples within each fold.
     Returns an array of validation (recall) scores
     """
@@ -434,17 +463,17 @@ def score_dimred_model_PR(model, dimred_model, X, y, params=None, dimred_params=
     return np.array(scores)
 
 # section 6: horizontal data (see HorData.ipynb)
-def plot_proj_notraining(X, y, model, params, dimred_normmode, title, savefig):
+def plot_proj_notraining(X, y, model, params, dimred_normmodes, title, savefig):
     """
-    Plot the dimensionality reduction results for model with parameters params on data X and y, for different norm modes dimred_normmode. 
-    Models must have no training needed, like TSNE or UMAP. 
+    Plot the dimensionality reduction results for model with parameters 'params' on data 'X' and 'y', for different norm modes dimred_normmodes. 
+    Models must have no training needed, like TSNE or UMAP. The plots are saved with title 'title' and under the path 'savefig' 
     """
-    savefile_normmode = dimred_normmode.copy()
+    savefile_normmode = dimred_normmodes.copy()
     mask0 = np.array(1-y).astype(bool)
     mask1 = np.array(y).astype(bool)
     dimred_model = model(**params)
 
-    for j, normmode in enumerate(dimred_normmode):
+    for j, normmode in enumerate(dimred_normmodes):
         norm_X = NormalizeThickness(X, normmode)
         X_t = dimred_model.fit_transform(norm_X)
         # plot
@@ -458,18 +487,18 @@ def plot_proj_notraining(X, y, model, params, dimred_normmode, title, savefig):
         fig.savefig(savefig + savefile_normmode[j], bbox_inches='tight')
 
 
-def plot_per_layer(X, y, mask, model, params, dimred_normmode, title, savefig):
+def plot_per_layer(X, y, mask, model, params, dimred_normmodes, title, savefig):
     """ 
-    Per layer, plot the dim. red. model results for data X and labels y, for model with parameters params. Models don't have training and testing data, like TSNE or UMAP.
+    Per layer, plot the dim. red. model results for data 'X' and labels 'y', for model with parameters params. Models don't have training and testing data, like TSNE or UMAP.
     y is of shape (N, 2), with y[:,0] containing labels for AMD or control, and y[:, 1] containing labels indicating the layer number.
     The mask is of shape (nbr of layers, y_shuffle.shape[0]), where mask[i,:] is a mask indicating if the data belongs to layer i or not.
     """
     alpha = 0.1
     dimred_model = model(**params)
     number_layers = mask.shape[0]
-    savefile_normmode = dimred_normmode.copy()
+    savefile_normmode = dimred_normmodes.copy()
 
-    for j, normmode in enumerate(dimred_normmode):
+    for j, normmode in enumerate(dimred_normmodes):
         # number of subplots = number of layers. 
         fig, ax = plt.subplots(number_layers, figsize=(6,8))
 
