@@ -6,6 +6,7 @@ The folder is structured as follows:
 - [exploration.ipynb](exploration.ipynb): jupyter notebook exploring the thickness data. 
 - [Stacked_Data.ipynb](Stacked_Data.ipynb): jupyter notebook exploring the stacked data, plotting the distribution of the thickness layers, and applying one model as test for the first time. 
 - [Dim_Red_ModelComparisons.ipynb](Dim_Red_ModelComparisons.ipynb): jupyter notebook running a serie of dimensionality reduction models on the thickness layers in order to compare the results. 
+
   4 Model Comparisons on Thickness Layers
   - 4.1 One model study
     - 4.1.1 NMF model
