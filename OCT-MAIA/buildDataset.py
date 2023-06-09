@@ -11,6 +11,9 @@ from skimage import exposure
 import cv2
 import math
 
+IMAGE_HEIGHT = 70
+IMAGE_WIDTH = 768
+
 def getN(M, L):
     return math.floor((L-1)//(M-1))
 
