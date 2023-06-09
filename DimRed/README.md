@@ -38,4 +38,4 @@ The folder is structured as follows:
       - 6.4.1: TSNE on single layers
       - 6.4.2: UMAP on single layers
 
-To summarize, the most important files are [Dim_Red_ModelComparisons.ipynb](Dim_Red_ModelComparisons.ipynb), [Dim_Red_GradientImage_ModelComparisons.ipynb](Dim_Red_GradientImage_ModelComparisons.ipynb) and [HorData.ipynb](HorData.ipynb), which compare models on thickness layers, gradient filtered scans and horizontal data, thanks to the helper functions in [helpers.py](helpers.py). The other files are for exploration of the data and testing.
+To summarize, the most important files are [Dim_Red_ModelComparisons.ipynb](Dim_Red_ModelComparisons.ipynb), [Dim_Red_GradientImage_ModelComparisons.ipynb](Dim_Red_GradientImage_ModelComparisons.ipynb) and [HorData.ipynb](HorData.ipynb), which compare models on thickness layers, gradient filtered scans and horizontal data, thanks to the helper functions in [helpers.py](helpers.py). The other files are for data exploration and testing.
